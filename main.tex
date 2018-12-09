@@ -1,0 +1,78 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\begin{document}
+
+\title{Spatial Models and Areal Unit Observations For Binary Demographic Health Data}
+\author{Sara LaPlante \& Neal Marquez}
+\date{September 2018}
+
+\maketitle
+
+\begin{abstract}
+A new found focus on reducing inequalities in health outcomes has required that geolocated(point) data be used to understand the geographic risk field of detrimental health outcomes and who lies at the margins for greatest risk. While some data sources provide geographic coordinates of the location that individuals were surveyed, many more data points are representative of larger areal units(polygons). How to harmonize these data sources has been widely contested, but to date, no agreed solution has overcome issues when data is presented in the form of point and polygons. We present a new approach using an approximated integration of a continuous underlying field to incorporate areal units of data of any shape alongside point data for a binomial process.  To test this approach we compare our methodology against previously stated solutions in a simulation environment where the underlying structure of the "risk field" is known. Our analysis finds that the estimated risk field is able to be faithfully recovered in a number of simulation scenarios, out performing previous models. 
+\par \textbf{Keywords:} key words, here
+\end{abstract}
+
+\section{Introduction}\label{introduction}
+
+The use of continuous spatial models to estimate health risks in very granular well defined locations has seen a boom in the global health field in recent years \cite{Bosco2017, Burke2016, Gething2015, Golding2017, Utazi2018a, Wakefield2017}. The ability to report on estimates of a particular health outcome at any administrative level shape and size is an attractive feature for turning research into a policy relevant measure. Estimation of continuous spatial risk fields enable researchers to relay information to policy makers who may have jurisdiction over different administrative areas with differing levels of reach. 
+
+While many have touted the importance of creating more precise metrics for directed health policies\cite{Bhutta2016, Desmond-Hellmann2016}, there is no consensus on the best way to approach creating continuous spatial risk fields, both in terms of methodology and the criteria for data inclusion in a particular analysis. For example, while most of the previous undertakings that have created continuous spatial risk fields for health outcomes have relied on the Demographic and Health Survey (DHS) for inference, whether and how to include other data sources into the analysis is debated. While the DHS provides a reliable data set of over 300 surveys constructed with a multi-stage cluster sampling design in over 90 countries, no one country has been surveyed more than 5 times in the 16 year period between the 2000-2015 period, with many countries only being surveyed on two or less occasions \cite{Burgert-Brucker2016, Gething2015}. This limitation has led several studies to go beyond the inclusion of just DHS data 
+
+\section{Background}\label{background}
+
+The conclusion of the Millennium Development Goals (MDGs) at the end of 2015 and the subsequent analysis of progress that countries made toward these goals provided as many questions as it answered. The improvements of various health outcomes were evident for many countries, and although not all countries had not met the benchmarks set out by the MDGs, most saw serious improvements. These improvements, however, brought up further lines of questioning. Namely, policy makers are know concerned with the how and who of the advancements made during this time period. What changes in health policy, infrastructure, and technologies made this improved state of health possible and who within each of these countries for which metrics are reported was benefiting from the changes that were made. 
+
+The nature of the MDGs placed a strong importance on 
+
+\begin{itemize}
+\item When and how did spatial models begin to start to see use 
+\item What has been the application thus far within public health
+\item How can policy makers utilize this data
+\item limitation imposed by data requirements
+\item how have others previously tried to overcome this requirement?
+\item what are the ways that these models fall short
+\end{itemize}
+
+\section{Methods}\label{methods}
+
+\begin{itemize}
+\item Introduction to our model
+\item list out the derivation
+\item list out how the model is not susceptible to past flaws
+\end{itemize}
+
+\section{Analysis}\label{analysis}
+
+\begin{itemize}
+\item Lay out how what we are comparing, our model vs utazi model
+\item describe the simulation framework (2700 different risk fields)
+\item list out the different sampling strategies (9 different sampling frames)
+\item discuss briefly how the models are fitted using TMB and INLArespectively
+\item Briefly mention how we will evaulate the models
+\end{itemize}
+
+\section{Results}\label{results}
+
+\begin{itemize}
+\item  Discuss model performance across different stratification's and performance checks
+\item RMSE and Coverage at the pixel level and Beta bias
+\end{itemize}
+
+\section{Discussion}\label{discussion}
+
+\begin{itemize}
+\item What are the implications
+\item where is thus model appropriate
+\item what are we planning to do moving forward
+\end{itemize}
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{ppp.bib}
+
+\end{document}

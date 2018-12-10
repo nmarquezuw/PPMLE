@@ -5,15 +5,14 @@
 
 \begin{document}
 
-\title{Spatial Models and Areal Unit Observations For Binary Demographic Health Data}
+\title{A Spatial Regression Model for Combined Point-Polygon Data}
 \author{Sara LaPlante \& Neal Marquez}
-\date{September 2018}
+\date{December 2018}
 
 \maketitle
 
 \begin{abstract}
 A new found focus on reducing inequalities in health outcomes has required that geolocated(point) data be used to understand the geographic risk field of detrimental health outcomes and who lies at the margins for greatest risk. While some data sources provide geographic coordinates of the location that individuals were surveyed, many more data points are representative of larger areal units(polygons). How to harmonize these data sources has been widely contested, but to date, no agreed solution has overcome issues when data is presented in the form of point and polygons. We present a new approach using an approximated integration of a continuous underlying field to incorporate areal units of data of any shape alongside point data for a binomial process.  To test this approach we compare our methodology against previously stated solutions in a simulation environment where the underlying structure of the "risk field" is known. Our analysis finds that the estimated risk field is able to be faithfully recovered in a number of simulation scenarios, out performing previous models. 
-\par \textbf{Keywords:} key words, here
 \end{abstract}
 
 \section{Introduction}\label{introduction}
@@ -36,6 +35,26 @@ A strong limitation of these analysis is that they require all data to be locate
 
 \subsection{SPDE and Continuous Spatial Risk Fields}
 
+By far, the most used approach to estimating continuous spatial risk fields in health research has been through the use of the the Stochastic Partial Differential Equations (SPDE). The SPDE approach allows one to estimate a continuous Gaussian processes, by way of approximation through a Gaussian Markov Random Field \cite{Lindgren2011}. This approximation allows one to estimate a continuous spatial field in a more traditional statistical model that enables incorporation of covariate fixed effects and uncertainty on the estimated field. For this paper we restrict ourselves to analyzing binomial data, which is a common from of data used in public health to estimate health outcomes. The SPDE model states that we may reconstruct a continuous spatial field by estimating the linear form and parameters seen in equation \ref{binomSPDE}.
+
+\begin{align}\label{binomSPDE}\begin{split}
+    i,j \in \{1, \dots, n\}\\
+    Y_i \sim \text{Binomial}(N_i, \hat{p}_i) \\
+    \text{logit}(\hat{p}_i) = X_i \hat{\boldsymbol{\beta}} + \eta(s_i)  \\
+    \boldsymbol{\eta} \sim \text{MVN}(\boldsymbol{0}, \boldsymbol{\Sigma}) \\
+    \Sigma_{ij} = \frac{\hat{\sigma}^2_\eta}{2^{\nu-1} \Gamma(\nu)}
+        (\hat{\kappa} ||s_i - s_j||)^\nu K_\nu(\hat{\kappa} ||s_i - s_j||) \\
+    \Sigma_{ij} = \text{Cov}(\eta(s_i) , \eta(s_j))
+\end{split}\end{align}
+
+For any given observation $i$ that takes place at point $s_i$ on a continuous spatial field of interest we may estimate the parameters seen with a hat designation in equation \ref{binomSPDE} where $p_i$ is the probability of some health related event. More often than not, a Bayesian hierarchical approach is used with hyper-priors for the parameters $\kappa$ and $\sigma$ \cite{Burke2016, Reiner2018, Utazi2018a, Wakefield2017} and an Integrated Nested Laplace Approximation (INLA) to the posterior \cite{Rue2009}, however, other studies from fields outside of public health have utilized Restricted Maximum Likelihood (REML) to fit the parameters \cite{Gruss2018} using the software Template Model Builder (TMB) \cite{Kristensen2016a}.
+
+\subsection{Previous Approaches to Polygon Data Utilization}
+
+While many studies simply have chosen to exclude polygon data from their analysis several authors have taken on approaches for dealing with polygon data in continuous spatial field analysis. In studies related to the Global Burden of Disease analysis, the common approach has been to incorporate data by way of re-sampling such that point data is derived from polygon data by a population weighted placement of J representative points which are constructed by way of K-means clustering \cite{Golding2017, Reiner2018}. In this way the model deals only with pseudo constructed points from polygons and may be incorporated into the analysis in a typical fashion. Others have previously commented on the problematic nature of this approach \cite{Wakefield2017} including the authors themselves calling for a more robust approach for dealing with the inclusion of polygon data that more appropriately deals with point uncertainty which is artificially minimized through point replacement \cite{Golding2017}.
+
+
+
 \section{Methods}\label{methods}
 
 \begin{itemize}
@@ -44,15 +63,54 @@ A strong limitation of these analysis is that they require all data to be locate
 \item list out how the model is not susceptible to past flaws
 \end{itemize}
 
-\section{Analysis}\label{analysis}
 
-\begin{itemize}
-\item Lay out how what we are comparing, our model vs utazi model
-\item describe the simulation framework (2700 different risk fields)
-\item list out the different sampling strategies (9 different sampling frames)
-\item discuss briefly how the models are fitted using TMB and INLArespectively
-\item Briefly mention how we will evaulate the models
-\end{itemize}
+
+
+
+
+
+
+
+
+\section{Model Testing}\label{model testing}
+
+To test the performance of our model, we simulate a wide variety of randomly-generated risk fields to mimic potential geographies found in practical applications. We then sample from these fields to mimic sampling that would occur in real scientific research and subsequently run our proposed model on the sample to see if it can recover the true generated field. Since we know the true parameters fed into each simulation, we will be able to measure how closely our model was able to estimate the true risk field it is given.
+
+As a point of reference, we have chosen to test a previously proposed model alongside our own. This will enable us to see where our model does (or does not) provide improvements. The model we have chosen for comparison is that proposed by Utazi, et al. (2018). For ease of use, we will refer to this as the ``Utazi model'' and to our model as the ``Riemann model''. (This name comes from the fact that our model uses Riemann sums to approximate the model's main integral.)
+
+To generate the 450 risk fields we will use in our simulations, we begin with a 60x60 pixel grid. We assume that the risk for each pixel in the grid is generated by an inverse logit of an intercept, one covariate, and a latent spatial field: $$p_i=inverse\ logit(\beta_0+\beta_1x+ \eta(s_i)).$$ To create diversity in the fields, we vary the following: covariate type, covariate value, and spatial range. The intercept we hold constant ($\beta_0=-2$ for all fields). Since in practice, a variety of covariates generate risk fields, we consider three types: a truly random covariate, a covariate correlated across space, and a covariate constant across large geographic regions. Figure XX shows these scenarios.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{./figures/covariateeffects.png}
+    \caption{Examples of three simulated risk fields using each of the three covariate types and the same latent spatial field. The risk field on the left is found by plugging the components shown on the right into the inverse logit function, pixel by pixel, from a transformation of a linear combination of the $\boldsymbol{\beta}$ parameters, a single covariate, and a latent spatial process.}.
+\end{figure} For each of these covariate types, we generate fields with covariate values in $\{-2, -.5, .2, .4, 2\}$. We also vary the spatial range in $\{.3, .5, .7\}$. This measures the spatial correlation of the spatial components in our model (either the latent spatial field alone or both the latent spatial field and the spatially-correlated  covariate). Finally, we use 10 random seeds for each combination of values to ensure randomness in our true fields. The components that go into these 450 risk fields are shown in Figure XX.
+ \begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{./figures/samplingexplained.png}
+    \caption{A visual aid to understanding how we generate each of the 450 risk fields and 24,300 samples in our simulation.}
+\end{figure}
+
+We sample from each of these generated risk fields to create 24,300 samples for model testing. Each sample is a combination of a risk field, one of three sampling types, one of three sampling grids, and one of six sample sizes. By sampling types, we mean whether we simulate that the data came to us as polygons only, a combination of non-overlapping points and polygons, or a combination of overlapping points and polygons. In an ideal world, we would only receive point data with a large sample size, but the literature has already addressed this scenario well and our model will perform identically to many well-tested models. We focus on the remaining models instead. Figure XX shows what these types of samples would look like given the true risk field shown.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{./figures/samplingtypes2.png}
+    \caption{An example of a simulated true risk field (left) and the four sampling types (right). We exclude point-only sampling in our simulation.}
+\end{figure} The sampling grids allow us to vary the size of the polygons we sample (3x3, 5x5, 9x9). We choose sample sizes uniformly from 50 to 300.
+
+After creating this simulation environment, we test both the Utazi and Riemann models on each of the 24,300 samples. The Riemann model fits using restricted maximum likelihood via R's Template Model Builder. The Utazi model fits using a combination of Bayesian inferene and integrated nested Laplace approximation via R's INLA package as outlined in Utazi, et al. (2018). Both models estimate a $\beta_0$ value, a  $\beta_1$ value, and the latent spatial field. We plug these values into the assumed form of the pixel probability to predict a risk value for each pixel in the 60x60 grid. Each model also produces a Hessian matrix which we use to estimate the standard errors for our estimates.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{Results}\label{results}
 
